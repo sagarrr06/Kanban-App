@@ -17,6 +17,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(User user) throws UserAlreadyExistsException {
         //save the user in the db
+        System.out.println(user);
         if (userRepository.findById(user.getEmailId()).isPresent()) {
             throw new UserAlreadyExistsException();
         }

@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -16,13 +17,13 @@ public class User {
     @Transient
     private String password;
     private String profession;
-    private ImageModel userImage;
+    private byte[] userImage;
     private List<Board> myBoards;
 
     public User() {
     }
 
-    public User(String emailId, String username, String password, String profession, ImageModel userImage, List<Board> myBoards) {
+    public User(String emailId, String username, String password, String profession, byte[] userImage, List<Board> myBoards) {
         this.emailId = emailId;
         this.username = username;
         this.password = password;
@@ -38,12 +39,10 @@ public class User {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", profession='" + profession + '\'' +
-                ", userImage=" + userImage +
+                ", userImage=" + Arrays.toString(userImage) +
                 ", myBoards=" + myBoards +
                 '}';
     }
-
-
 
     public String getEmailId() {
         return emailId;
@@ -85,11 +84,11 @@ public class User {
         this.myBoards = myBoards;
     }
 
-    public ImageModel getUserImage() {
+    public byte[] getUserImage() {
         return userImage;
     }
 
-    public void setUserImage(ImageModel userImage) {
+    public void setUserImage(byte[] userImage) {
         this.userImage = userImage;
     }
 }

@@ -10,17 +10,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import org.springframework.core.io.Resource;
 
 import javax.management.Query;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.springframework.data.mongodb.core.FindAndModifyOptions.options;
@@ -47,6 +47,10 @@ public class UserServiceImpl implements UserService {
     private MemberRepository memberRepository;
     @Autowired
     private MongoOperations mongoOperations;
+    public final String IMAGE_DIR = new ClassPathResource("images").getFile().getAbsolutePath();
+
+    public UserServiceImpl() throws IOException {
+    }
 
     @Override
     public User saveUser(User user) throws UserAlreadyExistsException {
@@ -121,9 +125,11 @@ public class UserServiceImpl implements UserService {
         //---------------------------------------
         String msg = board.getBoardName()+" board is created successfully !";
         String sub = "Board Created....";
-        String attch = "D:\\NIIT\\SE Capstone Project\\SE-Capstone-Project\\KanbanBoard\\KanbanBoardService\\src\\main\\resources\\images\\thankYou.jpg";
-
-        EmailData userDto = new EmailData(emailId,msg,sub,attch);
+        String path = null;
+        //String attch = "H:\\Projects\\Final Project\\SE-Capstone-Project\\KanbanBoard\\KanbanBoardService\\src\\main\\resources\\images\\thankYou.jpg";
+        path = String.valueOf(Path.of(IMAGE_DIR + File.separator +"thankYou.jpg" ));
+        System.out.println(path);
+        EmailData userDto = new EmailData(emailId,msg,sub,path);
         userMailProxy.sendUserDataToMailWithAttachment(userDto);
         return boardRepository.save(board);
     }

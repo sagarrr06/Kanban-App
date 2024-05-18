@@ -5,13 +5,14 @@
     <div class="form-container">
 
         <div class="image-box">
-            <img *ngIf="userData?.userImage?.type==''; then ifBlock else elseBlock" />
+            <img *ngIf="imageUrl==''; then ifBlock else elseBlock" />
             <ng-template #ifBlock>
                 <img src="./../../assets/images/userLogo.png" />
             </ng-template>
             <ng-template #elseBlock>
-                <img [src]="userData?.userImage?.url" />
+                <img [src]="'data:image/png;base64,'+imageUrl" />
             </ng-template>
+            
         </div>
 
 

@@ -1,5 +1,6 @@
 package com.niit.KanbanBoardService.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.niit.KanbanBoardService.domian.*;
 import com.niit.KanbanBoardService.exception.*;
 import com.niit.KanbanBoardService.service.UserService;
@@ -13,27 +14,25 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.FileHandler;
 
 @RestController
 @RequestMapping("/api/v1")
 public class KanBanController {
-    private UserService userService;
     private ResponseEntity responseEntity;
     @Autowired
-    public KanBanController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
 
-    private  Long imageId = 1L;
-    @PostMapping(value = {"/save"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> save(@RequestPart("user") User user, @RequestPart("imageFile") MultipartFile file){
+    @PostMapping("/save")
+    public ResponseEntity<?> save(@RequestParam("user") String userData, @RequestParam("imageFile") MultipartFile file){
         try {
-            ImageModel image =  uploadImage(file);
-            image.setId(imageId);
-            imageId ++;
-            user.setUserImage(image);
+            ObjectMapper om = new ObjectMapper();
+            User user = om.readValue(userData,User.class);
+            System.out.println(user);
+            user.setUserImage(file.getBytes());
             responseEntity = new ResponseEntity<>(userService.saveUser(user), HttpStatus.OK);
         }catch (UserAlreadyExistsException e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.CONFLICT);
@@ -43,14 +42,6 @@ public class KanBanController {
         return responseEntity;
     }
 
-    public ImageModel uploadImage(MultipartFile file) throws IOException {
-        ImageModel imageModel = new ImageModel(
-                file.getOriginalFilename(),
-                file.getContentType(),
-                file.getBytes()
-        );
-        return imageModel;
-    }
 
 
 
@@ -118,11 +109,9 @@ public class KanBanController {
             responseEntity = new ResponseEntity<>(userService.createNewTask(boardName,stageName,task,emailId), HttpStatus.OK);
         }catch (InvalidCredentialsException e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.UNAUTHORIZED);
-        }catch (BoardNotFoundException e){
+        }catch (BoardNotFoundException | StageNotFoundException e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }catch (StageNotFoundException e){
-            responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }catch (TaskAlreadyExistException e){
+        } catch (TaskAlreadyExistException e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.CONFLICT);
         }catch (Exception e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
@@ -138,13 +127,9 @@ public class KanBanController {
             responseEntity = new ResponseEntity<>(userService.moveTaskToAnotherStage(emailId,boardName,fromStage,toStage,task), HttpStatus.OK);
         }catch (InvalidCredentialsException e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.UNAUTHORIZED);
-        }catch (BoardNotFoundException e){
+        }catch (BoardNotFoundException | StageNotFoundException | TaskNotFoundException e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }catch (StageNotFoundException e){
-            responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }catch (TaskNotFoundException e){
-            responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }catch (Exception e){
+        } catch (Exception e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
@@ -198,13 +183,9 @@ public class KanBanController {
             responseEntity = new ResponseEntity<>(userService.updateTask(emailId,boardName,stageName,newTaskData), HttpStatus.OK);
         }catch (InvalidCredentialsException e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.UNAUTHORIZED);
-        }catch (BoardNotFoundException e){
+        }catch (BoardNotFoundException | StageNotFoundException | TaskNotFoundException e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }catch (StageNotFoundException e){
-            responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }catch (TaskNotFoundException e){
-            responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }catch (Exception e){
+        } catch (Exception e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
@@ -219,11 +200,7 @@ public class KanBanController {
             responseEntity = new ResponseEntity<>(userService.deleteTask(emailId,boardName,stageName,taskId), HttpStatus.OK);
         }catch (InvalidCredentialsException e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.UNAUTHORIZED);
-        }catch (BoardNotFoundException e){
-            responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }catch (StageNotFoundException e){
-            responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }catch (TaskNotFoundException e){
+        }catch (BoardNotFoundException | StageNotFoundException | TaskNotFoundException e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
         } catch (Exception e){
             responseEntity = new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);

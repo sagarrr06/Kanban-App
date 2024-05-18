@@ -1,11 +1,10 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { UserService } from '../services/user.service';
-import { ImageProcessingService } from '../services/image-processing.service';
-import { map } from 'rxjs';
+
 
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatChipSelectionChange } from '@angular/material/chips';
+
 import { MatDialog } from '@angular/material/dialog';
 import { AddMemberDialogComponent } from '../add-member-dialog/add-member-dialog.component';
 import { Router } from '@angular/router';
@@ -21,7 +20,6 @@ export class UpdateUserComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private imageService: ImageProcessingService,
     private fb: FormBuilder,
     private _snackBar: MatSnackBar,
     private renderer: Renderer2,
@@ -29,6 +27,7 @@ export class UpdateUserComponent implements OnInit {
     private route: Router
   ) {}
 
+  imageUrl:any
   ngOnInit(): void {
     this.userForm = this.fb.group({
       username: ['', Validators.required],
@@ -42,11 +41,13 @@ export class UpdateUserComponent implements OnInit {
   getAllUserData() {
     this.userService
       .getUserData()
-      .pipe(map((user: any) => this.imageService.createImages(user)))
       .subscribe((response) => {
         console.log(response);
-        this.userData = response;
-        this.userForm.patchValue(this.userData);
+          this.userData = response;
+          this.imageUrl = response.userImage;
+          this.userForm.patchValue(this.userData);
+     
+        
       });
   }
 

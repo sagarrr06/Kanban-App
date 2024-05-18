@@ -25,6 +25,8 @@ public class UserController {
     public ResponseEntity<?> saveUser(@RequestBody User user) {
         // Write the logic to save a user,
         // return 201 status if user is saved else 500 status
+        System.out.println("controller");
+        System.out.println(user);
         try {
             User userData = userService.saveUser(user);
             responseEntity = new ResponseEntity<>(userData, HttpStatus.CREATED);

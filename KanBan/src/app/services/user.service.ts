@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http'
+import {HttpClient} from '@angular/common/http'
 import { Observable } from 'rxjs';
-import { User } from '../model/User';
+
 
 @Injectable({
   providedIn: 'root',
@@ -11,9 +11,12 @@ export class UserService {
 
   MainUrl: String = 'http://localhost:8630/api/v1';
   AuthUrl: String = 'http://localhost:8630/api/v2';
+  formData = new FormData();
 
-  registerNewUser(userData: any): Observable<any> {
-    return this.http.post(`${this.MainUrl}/save`, userData);
+  registerNewUser(userImg:any ,userData: any): Observable<any> {
+    this.formData.append('imageFile', userImg);
+    this.formData.append("user",JSON.stringify(userData));
+    return this.http.post(`${this.MainUrl}/save`, this.formData);
   }
 
   loginUser(loginData: any): Observable<any> {

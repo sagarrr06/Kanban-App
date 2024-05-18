@@ -1,42 +1,4 @@
-<!-- <div>
 
-    <h2>SignUp Form</h2>
-
-    <div class="imagePreview">
-        <img *ngIf="user.userImage.url" [src]="user.userImage.url" alt="user image" >
-    </div>
-
-
-    <label for="userImage">Profile Image</label><br>
-    <input type="file" id="userImage" (change)="onFileSelected($event)">
-
-    <form #UserForm="ngForm" (ngSubmit)="addNewUser()">
-
-        <mat-form-field appearance="outline">
-            <mat-label>Email Id</mat-label>
-            <input matInput [(ngModel)]="user.emailId" name="emailId">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Password</mat-label>
-            <input matInput [(ngModel)]="user.password" name="password">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>UserName</mat-label>
-            <input matInput [(ngModel)]="user.username" name="username">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Profession</mat-label>
-            <input matInput [(ngModel)]="user.profession" name="profession">
-        </mat-form-field>
-
-        <button mat-raised-button color="primary" type="submit">SignUp</button>
-
-    </form>
-
-</div> -->
 <app-nav></app-nav>
 
 <div class="signin-container">
@@ -47,7 +9,7 @@
             <div class="image-section">
                 
                 <div class="imagePreview">
-                    <img [src]="userForm.get('userImage')?.value?.url">
+                    <img [src]="imgUrl">
                 </div>
                 <input class="image-take" type="file" id="userImage" (change)="onFileSelected($event)">
             </div>
